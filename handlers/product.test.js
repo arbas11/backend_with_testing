@@ -4,6 +4,7 @@ const { getProductByID, getAllProduct } = require("./product");
 
 const mockFindOneProduct = jest.fn();
 const mockFindAllProduct = jest.fn();
+
 jest.mock("../storage", () => {
     return {
         models: {
@@ -45,6 +46,7 @@ test("getProductById returns an existing product from merchant", async () => {
             "name": "test1"
     }});
     })
+    
 test("getProductById returns 404 when a product id does not exists", async () => {
     const request = httpMocks.createRequest({
       method: "GET",
@@ -91,6 +93,7 @@ test("getProductById returns 404 when a product id does not exists", async () =>
             "name": "test1"
     }});
     })
+
 test("getAllProduct return 404 when a product id does not exists", async () => {
     const request = httpMocks.createRequest({
       method: "GET",

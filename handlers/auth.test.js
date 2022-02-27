@@ -1,5 +1,6 @@
 const httpMocks = require("node-mocks-http");
 
+
 //ini models dari auth { merchants: merchants, products: products }
 const hasilmodels = [
     {
@@ -30,7 +31,7 @@ const hasilmodels = [
         "updatedAt": "2022-02-26T13:39:09.000Z"
     }
 ]
-const { login } = require("./auth");
+const { login, logout } = require("./auth");
 
 const mockFindOne = jest.fn();
 jest.mock("../storage", () => {
@@ -43,7 +44,7 @@ jest.mock("../storage", () => {
     }
 });
 
-// testing getMerchantByid
+// testing login successful
 test("login successful", async () => {
     const req = httpMocks.createRequest({
         method: "POST",
@@ -53,6 +54,7 @@ test("login successful", async () => {
             password: "password"
         },
     });
+    // console.log('ini request', req)
     mockFindOne.mockResolvedValue(
         {
             "id": "arbas",
@@ -60,7 +62,6 @@ test("login successful", async () => {
         }
     )
     const res = httpMocks.createResponse();
-    res.cookie(()=>res.cookie('uid', id))
     await login(req,res)
     const { id } = req.body
     expect(res.statusCode).toEqual(200);
@@ -71,6 +72,8 @@ test("login successful", async () => {
             });
 
 });
+
+//test login failed
 test("login failed not valid request", async () => {
     const req = httpMocks.createRequest({
         method: "POST",
@@ -86,12 +89,13 @@ test("login failed not valid request", async () => {
         }
     )
     const res = httpMocks.createResponse();
-    res.cookie(()=>res.cookie('uid', id))
-    const { id, password } = req.body
+
     await login(req,res)
+
     expect(res._getJSONData()).toEqual({ error: "something wrong with the request" });
     expect(res.statusCode).toEqual(400);
 });
+
 test("login failed wrong id or password", async () => {
     const req = httpMocks.createRequest({
         method: "POST",
@@ -108,9 +112,28 @@ test("login failed wrong id or password", async () => {
         }
     )
     const res = httpMocks.createResponse();
-    res.cookie(()=>res.cookie('uid', id))
-    const { id, password } = req.body
+
     await login(req,res)
+
     expect(res._getJSONData()).toEqual({ error: "wrong id or password try again" });
     expect(res.statusCode).toEqual(400);
+});
+
+//logout
+
+test("logout testing", async () => {
+    const req = httpMocks.createRequest({
+        method: "POST",
+        url: "/merchant/logout"
+    });
+
+    const res = httpMocks.createResponse();
+
+    await logout(req,res)
+
+
+    expect(res.statusCode).toEqual(200);
+    expect(res._getJSONData()).toEqual({
+        logout: "successfully",
+    });
 });
