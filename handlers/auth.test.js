@@ -57,8 +57,8 @@ test("login successful", async () => {
     // console.log('ini request', req)
     mockFindOne.mockResolvedValue(
         {
-            "id": "arbas",
-            "user_password": "$2b$10$TrhJJ9bwJeA4Oj52tVH0aOEEz19Gjn8hgwhWCcX6aoVFAtl8.iE5K"
+            id : "arbas",
+            user_password : "$2b$10$TrhJJ9bwJeA4Oj52tVH0aOEEz19Gjn8hgwhWCcX6aoVFAtl8.iE5K"
         }
     )
     const res = httpMocks.createResponse();
@@ -84,8 +84,8 @@ test("login failed not valid request", async () => {
     });
     mockFindOne.mockResolvedValue(
         {
-            "id": "arbas",
-            "user_password": "$2b$10$TrhJJ9bwJeA4Oj52tVH0aOEEz19Gjn8hgwhWCcX6aoVFAtl8.iE5K",
+            id : "arbas",
+            user_password : "$2b$10$TrhJJ9bwJeA4Oj52tVH0aOEEz19Gjn8hgwhWCcX6aoVFAtl8.iE5K",
         }
     )
     const res = httpMocks.createResponse();
@@ -107,10 +107,11 @@ test("login failed wrong id or password", async () => {
     });
     mockFindOne.mockResolvedValue(
         {
-            "id": "arbas",
-            "user_password": "$2b$10$TrhJJ9bwJeA4Oj52tVH0aOEEz19Gjn8hgwhWCcX6aoVFAtl8.iE5K",
+            id : "arbas",
+            user_password : "$2b$10$TrhJJ9bwJeA4Oj52tVH0aOEEz19Gjn8hgwhWCcX6aoVFAtl8.iE5K",
         }
     )
+    console.log(mockFindOne.mockResolvedValue.id)
     const res = httpMocks.createResponse();
 
     await login(req,res)

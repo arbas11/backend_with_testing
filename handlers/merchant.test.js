@@ -1,15 +1,27 @@
 const httpMocks = require("node-mocks-http");
+const request = require('supertest');
+const app = require('../app')
+const { models } = require('../storage')
 
-const { getMerchantByid } = require("./merchant");
+
+const { getMerchantByid, registerMerchant } = require("./merchant");
 
 const mockFindOneMerchant = jest.fn();
+const mockCreateMerchant = jest.fn();
+
+beforeEach(() => {
+    mockFindOneMerchant.mockReset()
+  })
 
 jest.mock("../storage", () => {
     return {
         models: {
-            merchants: {
-                findOne: () => mockFindOneMerchant()
-            },
+            merchants:
+            {
+                findOne: () => mockFindOneMerchant(),
+                createOne: ()=>mockCreateMerchant()
+            }
+
         },
     };
 });
@@ -63,39 +75,59 @@ test("getMerchantByid returns 404 for not registered merchant", async () => {
     });
    });
 
+
+
 //  // testing registerMerchant
+
+test("testing register merchant return status 200", async () =>{
+    const response = await request(app).post("/merchant/register").send({
+        "id" : "test5",
+        "user_name" : "toko5",
+        "user_password" : "password",
+        "address" : "jalan no 5",
+        "phone_num" : "08555555555"
+    })
+
+    console.log(response)
+
+    expect(response.statusCode).toBe(200);
+});
 // test("registerMerchant", async () => {
 //     const request = httpMocks.createRequest({
 //         method: "POST",
 //         url: "/merchant/register",
 //         body: {
-//             id: "ario",
-//             user_password: "password"
+//             id: "test1",
+//             user_name: "toko1",
+//             user_password: "password",
+//             address: "jalan no 1",
+//             phone_num: "081111111111111"
 //         },
 //     });
-//     const { user_password } = request.body;
-//     const hash = await bcrypt.hash(user_password, 10);
-//     const response = httpMocks.createResponse();
-//     console.log(response)
-//     await registerMerchant(request, response);
-//     mockCreateMerchant.mockReturnValue(
+//     mockCreateMerchant.mockResolvedValue(
 //         {
-//             merchants: {
-//             id: "ario",
-//             user_password: hash
-//              }
-//         }      
-//     );
-//     console.log(mockCreateMerchant.mockReturnValue.merchants)
+//             id: "test1",
+//             user_name: "toko1",
+//             user_password: "password",
+//             address: "jalan no 1",
+//             phone_num: "081111111111111"
+//         }
+//     )
+//     const response = httpMocks.createResponse();
+
+//     await registerMerchant(request, response);
+
 //     expect(response.statusCode).toEqual(200);
 //     expect(response._getJSONData()).toEqual({
 //         register: "successfully",
 //         acsess: "/merchant/:id/product",
-//         item: {
-//             name: "ario",
-//             password: hash
-//         }
-//     });
+//         register: "successfully",
+//         acsess: "/merchant/:id/product",
+//         id : request.body.id,
+//         user_name : request.body.user_name,
+//         address : request.body.address,
+//         phone_num : request.body.phone_num,
+//         })
 // });
 
 

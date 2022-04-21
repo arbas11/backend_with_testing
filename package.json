@@ -12,17 +12,22 @@
     "bcrypt": "^5.0.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "fs": "^0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
     "path": "^0.12.7",
     "sequelize": "^5.22.3",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "uuid": "^8.3.2",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "jest": "^27.5.1",
     "js-cookie": "^3.0.1",
-    "node-mocks-http": "^1.11.0"
+    "node-mocks-http": "^1.11.0",
+    "supertest": "^6.2.2"
   }
 }

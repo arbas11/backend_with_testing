@@ -1,21 +1,27 @@
 const httpMocks = require("node-mocks-http");
 
-const { getProductByID, getAllProduct } = require("./product");
+const { getProductByID, getAllProduct, updateProduct } = require("./product");
 
 const mockFindOneProduct = jest.fn();
 const mockFindAllProduct = jest.fn();
+const mockUpdateProduct = jest.fn();
 
 jest.mock("../storage", () => {
     return {
         models: {
             products: {
                 findOne: () => mockFindOneProduct(),
-                findAll: () => mockFindAllProduct()
+                findAll: () => mockFindAllProduct(),
+                updateData: () => mockUpdateProduct()
             },
         },
     };
 });
-
+beforeEach(() => {
+    mockFindOneProduct.mockReset()
+    mockUpdateProduct.mockReset()
+    mockFindAllProduct.mockReset()
+  })
 // console.log('ini mock find one setelah jest.fn()', mockFindOneProduct)
 // console.log('ini jest.mock.models', jest.mock.models)
 
@@ -46,7 +52,7 @@ test("getProductById returns an existing product from merchant", async () => {
             "name": "test1"
     }});
     })
-    
+
 test("getProductById returns 404 when a product id does not exists", async () => {
     const request = httpMocks.createRequest({
       method: "GET",
@@ -113,3 +119,37 @@ test("getAllProduct return 404 when a product id does not exists", async () => {
         item: "wrong user id or unauthorized user"
     });
    });
+
+   // testing update product
+// test("updateProduct successful", async () => {
+//     const req = httpMocks.createRequest({
+//         method: "POST",
+//         url: "/merchant/:id/product/:prodid",
+//         body: {
+//             id: 1,
+//             name: "test2"
+//         },
+//     });
+//     // console.log('ini request', req)
+//     mockUpdateProduct.mockResolvedValue({
+//         "products" :{
+//             "id": 1,
+//             "name": "test1"
+//      } });
+//     const res = httpMocks.createResponse();
+    
+//     await updateProduct(req,res)
+
+//     expect(res.statusCode).toEqual(200);
+//     expect(res._getJSONData()).toEqual({
+//         "instruction": {
+//             "status": "sucessfully update"
+//         },
+//         "product": {
+//             "product": [
+//                 1
+//             ]
+//         }
+//     });
+
+// });
