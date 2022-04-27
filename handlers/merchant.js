@@ -79,12 +79,18 @@ const getMerchantByid = async (req, res) => {
 
 const removeMerchant = async (req, res) => {
   const id = req.params.id;
-
-  await models.merchants
+  await models.products
     .destroy({
       where: {
-        id: id,
+        merchant_id: id,
       },
+    })
+    .then(async () => {
+      await models.merchants.destroy({
+        where: {
+          id: id,
+        },
+      });
     })
     .then(function (item) {
       return res.status(200).json({

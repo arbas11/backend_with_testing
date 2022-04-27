@@ -1,9 +1,13 @@
 function applyRelation(sequelize) {
-    const { merchants, products} = sequelize.models;
+  const { merchants, products } = sequelize.models;
 
-    merchants.hasMany(products, { foreignKey: 'merchant_id' });
-    products.belongsTo(merchants);
-
+  merchants.hasMany(products, {
+    foreignKey: "merchant_id",
+    onDelete: "cascade",
+  });
+  products.belongsTo(merchants, {
+    onDelete: "cascade",
+  });
 }
 
 module.exports = { applyRelation };

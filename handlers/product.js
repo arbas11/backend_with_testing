@@ -1,5 +1,6 @@
 const { models } = require("../storage");
 const AppError = require("../utilities/appError");
+const { v4: uuid } = require("uuid");
 
 const getAllProduct = async (req, res) => {
   const products = await models.products.findAll();
@@ -7,6 +8,22 @@ const getAllProduct = async (req, res) => {
     res.status(200).json(products);
   } else {
     res.status(200).json({
+      item: "no product available",
+    });
+  }
+};
+
+const getAllMerchantProduct = async (req, res, next) => {
+  const { id } = req.params;
+  const product = await models.products.findAll({
+    where: {
+      merchant_id: id,
+    },
+  });
+  if (product) {
+    res.status(200).json(product);
+  } else {
+    res.status(404).json({
       item: "no product available",
     });
   }
@@ -28,34 +45,38 @@ const getProductByID = async (req, res, next) => {
     });
   }
 };
+
 const addNewProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, quantity, price } = req.body;
+  const { name, stock, price, category, description, picture } = req.body;
+  console.log(req.body, "from add new product");
   if (req.body.id) {
     res.status(400).send({
       error:
         "id should not be provided, since it is determined automatically by the database",
     });
   } else {
-    const id = req.cookies.uid;
     await models.products
       .create({
+        id: uuid(),
         name: name,
-        quantity: quantity,
         price: price,
+        stock: stock,
+        category: category,
+        description: description,
+        picture: picture,
         merchant_id: id,
       })
       .then(function (item) {
         res.status(200).json({
-          status: {
-            add: "successfully added!",
-          },
+          response: "successfully added!",
           product: {
             item,
           },
         });
       })
       .catch((error) => {
+        console.log(error, "from add new product");
         res.status(500).json({
           error: "something went wrong",
         });
@@ -64,15 +85,18 @@ const addNewProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  const { name, quantity, price } = req.body;
+  const { name, price, stock, category, description, picture } = req.body;
   const { prodid, id } = req.params;
 
   await models.products
     .update(
       {
         name: name,
-        quantity: quantity,
         price: price,
+        stock: stock,
+        category: category,
+        description: description,
+        picture: picture,
       },
       {
         where: {
@@ -83,9 +107,6 @@ const updateProduct = async (req, res) => {
     )
     .then((product) => {
       res.status(200).json({
-        instruction: {
-          status: "sucessfully update",
-        },
         product: {
           product,
         },
@@ -99,8 +120,8 @@ const updateProduct = async (req, res) => {
 };
 
 const removeProduct = async (req, res) => {
-  const { prodid } = req.params;
-  const id = req.cookies.uid;
+  console.log("remove product", req);
+  const { prodid, id } = req.params;
   await models.products
     .destroy({
       where: {
@@ -109,7 +130,7 @@ const removeProduct = async (req, res) => {
       },
     })
     .then((item) => {
-      res.status(200).json({
+      return res.status(200).json({
         instruction: {
           status: "sucessfully delete",
         },
@@ -119,11 +140,11 @@ const removeProduct = async (req, res) => {
       });
     })
     .catch((error) => {
-      res.status(500).json({
+      return res.status(500).json({
         error: "something went wrong",
       });
     });
-  res.status(200).json({ success: true });
+  return res.status(200).json({ success: true });
 };
 
 // const createMany = async () => {
@@ -239,4 +260,5 @@ module.exports = {
   addNewProduct,
   updateProduct,
   removeProduct,
+  getAllMerchantProduct,
 };
